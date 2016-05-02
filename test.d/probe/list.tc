@@ -1,0 +1,10 @@
+#!/bin/sh
+# description: list command parsing
+$PERF probe -l
+$PERF probe -l \*
+$PERF probe -l 'probe:*'
+
+! $PERF probe -l \*\|
+! $PERF probe -l \*\&
+! $PERF probe -l \*\!
+

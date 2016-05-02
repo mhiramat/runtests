@@ -1,0 +1,10 @@
+#!/bin/sh
+#description: Skip out-of-text functions
+
+echo "Check init text correctly skipped"
+INITTEXT=init_setup
+grep $INITTEXT /proc/kallsyms || exit_unsupported
+clear_all_probes
+! $PERF probe $INITTEXT
+$PERF probe $INITTEXT 2>&1 | grep "skip it"
+

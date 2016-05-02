@@ -1,0 +1,17 @@
+#!/bin/sh
+#description: Cut off the function suffix from name
+
+clear_all_probes
+echo "get a symbol which has a suffix"
+CANDIDATE=`egrep -m 1 '\.(isra|part|constprep)' /proc/kallsyms | cut -f3 -d' '`
+if [ -z "$CANDIDATE" ]; then
+  echo "No suffixed function found. skip it"
+  exit_unsupported
+fi
+echo "add an event on it"
+$PERF probe $CANDIDATE
+
+echo "add the second event on it (with suffix number)"
+$PERF probe -f $CANDIDATE
+
+clear_all_probes

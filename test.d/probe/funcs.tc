@@ -1,0 +1,8 @@
+#!/bin/sh
+# description: Basic function listup command
+
+$PERF probe -F &> /dev/null
+$PERF probe -x $PERF -F &> /dev/null
+$PERF probe -x $PERF -F 'map_*' &> /dev/null
+
+

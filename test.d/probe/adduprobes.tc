@@ -1,0 +1,13 @@
+#!/bin/sh
+#description: Basic probe adding on user binary
+
+clear_all_probes
+$PERF probe -x /bin/bash --add array_create
+
+clear_all_probes
+$PERF probe -x /bin/bash --add 'array_*'
+
+clear_all_probes
+$PERF probe /bin/bash 'array_*'
+
+clear_all_probes

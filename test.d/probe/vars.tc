@@ -1,0 +1,9 @@
+#!/bin/sh
+# description: readable vars command
+
+#check_kernel_debuginfo || exit_unsupported
+
+! $PERF probe -V
+
+$PERF probe -V vfs_read
+

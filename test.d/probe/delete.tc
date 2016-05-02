@@ -1,0 +1,8 @@
+#!/bin/sh
+# description: Basic probe deleting
+clear_all_probes
+
+$PERF probe --add vfs_read
+$PERF probe -x $PERF --add cmd_help
+
+$PERF probe -d \* 2>&1 | grep ^Removed | wc -l | grep '^2$'

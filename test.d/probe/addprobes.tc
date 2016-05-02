@@ -1,0 +1,15 @@
+#!/bin/sh
+#description: Basinc probe adding
+
+clear_all_probes
+$PERF probe --add vfs_read
+
+clear_all_probes
+$PERF probe -a vfs_read
+
+clear_all_probes
+$PERF probe vfs_read
+
+clear_all_probes
+
+! $PERF probe -d vfs_read vfs_read

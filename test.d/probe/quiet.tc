@@ -1,0 +1,6 @@
+#!/bin/sh
+#description: Quiet option check
+
+test `$PERF probe --quiet --add vfs_read | wc -l` -eq 0
+test `$PERF probe --quiet --list | wc -l` -ne 0
+test `$PERF probe --quiet --del vfs_read | wc -l` -eq 0

@@ -1,0 +1,6 @@
+#!/bin/sh
+#description: perf-probe wildcard support
+
+$PERF probe -nf -a 'vfs_* $params'
+$PERF probe -nf vfs_\* \$params
+

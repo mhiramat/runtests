@@ -1,0 +1,14 @@
+#!/bin/sh
+#description: Skip blacklist function
+
+echo "Check blacklisted function correctly skipped"
+BLACKFUNC=`head -n 1 /sys/kernel/debug/kprobes/blacklist | cut -f2`
+test "$BLACKFUNC" || exit_unsupported
+clear_all_probes
+
+echo "probing on blacklist must fail"
+(! $PERF probe $BLACKFUNC)
+
+echo "it should be skipped"
+$PERF probe $BLACKFUNC 2>&1 | grep "skip it"
+

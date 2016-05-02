@@ -1,0 +1,27 @@
+#!/bin/sh
+# description: invalid commands
+echo "Some commands requires an argument"
+! $PERF probe -a
+! $PERF probe -d
+! $PERF probe -L
+! $PERF probe -V
+echo "Some commands can omit the argument"
+$PERF probe -F > /dev/null
+$PERF probe -l > /dev/null
+echo "Commands are mutually exclusive"
+! $PERF probe -a xxx -d xxx
+! $PERF probe -a xxx -L foo
+! $PERF probe -a xxx -V foo
+! $PERF probe -a xxx -l
+! $PERF probe -a xxx -F
+! $PERF probe -d xxx -L foo
+! $PERF probe -d xxx -V foo
+! $PERF probe -d xxx -l
+! $PERF probe -d xxx -F
+! $PERF probe -L foo -V bar
+! $PERF probe -L foo -l
+! $PERF probe -L foo -F
+! $PERF probe -V foo -l
+! $PERF probe -V foo -F
+! $PERF probe -l -F
+

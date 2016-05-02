@@ -1,0 +1,8 @@
+#!/bin/sh
+#description: probe adding with --force
+clear_all_probes
+
+$PERF probe --add vfs_read
+! $PERF probe --add 'vfs_read'
+$PERF probe --force --add 'vfs_read'
+$PERF probe --del \*

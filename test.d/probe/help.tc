@@ -1,0 +1,5 @@
+#!/bin/sh
+# description: help messages
+! $PERF probe -h
+$PERF probe 2>&1 | grep usage
+

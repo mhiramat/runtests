@@ -1,0 +1,7 @@
+#!/bin/sh
+# description: perf probe --list outputs in stdout
+
+clear_all_probes
+$PERF probe --add 'vfs_read'
+test `$PERF probe --list | wc -l` -ne 0
+clear_all_probes

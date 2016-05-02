@@ -1,0 +1,20 @@
+#!/bin/sh
+# description: --line semantic errors
+
+echo "Acceptable --line descriptions"
+! ($PERF probe --line 'func' 2>&1 | grep "Semantic error")
+! ($PERF probe --line 'func:10' 2>&1 | grep "Semantic error")
+! ($PERF probe --line 'func:0-10' 2>&1 | grep "Semantic error")
+! ($PERF probe --line 'func:2+10' 2>&1 | grep "Semantic error")
+! ($PERF probe --line 'func@source.c' 2>&1 | grep "Semantic error")
+! ($PERF probe --line 'func@source.c:1' 2>&1 | grep "Semantic error")
+! ($PERF probe --line 'source.c:1' 2>&1 | grep "Semantic error")
+! ($PERF probe --line 'source.c:1+1' 2>&1 | grep "Semantic error")
+! ($PERF probe --line 'source.c:1-10' 2>&1 | grep "Semantic error")
+
+echo "Unacceptable --line descriptions"
+$PERF probe --line 'func:foo' 2>&1 | grep "Semantic error"
+$PERF probe --line 'func:1-foo' 2>&1 | grep "Semantic error"
+$PERF probe --line 'func:1+foo' 2>&1 | grep "Semantic error"
+$PERF probe --line 'func;lazy*pattern' 2>&1 | grep "Semantic error"
+
