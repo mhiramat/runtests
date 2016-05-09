@@ -1,0 +1,23 @@
+#!/bin/sh
+# description: Check cached events
+CACHEDIR=`abspath ./buildid-cache`
+_PERF="$PERF --buildid-dir $CACHEDIR"
+
+: "Check --cache availability" && {
+$_PERF probe 2>&1 | grep .*--cache || exit_unsupported
+}
+
+clear_all_probes
+
+: "Cache add without name" && {
+$_PERF probe --cache -a vmalloc
+$_PERF probe --cache -x $PERF -a 'probe_cache__new $vars'
+$_PERF probe --cache --list | grep vmalloc
+$_PERF probe --cache --list | grep probe_cache__new
+}
+
+: "Cache delete " && {
+$_PERF probe --cache -d vmalloc
+! ($_PERF probe --cache --list | grep vmalloc)
+}
+

@@ -1,0 +1,30 @@
+#!/bin/sh
+# description: Check cached events with names
+CACHEDIR=`abspath ./buildid-cache`
+_PERF="$PERF --buildid-dir $CACHEDIR"
+
+: "Check --cache availability" && {
+$_PERF probe 2>&1 | grep .*--cache || exit_unsupported
+}
+
+clear_all_probes
+
+: "Cache add with name" && {
+$_PERF probe --cache -a my_event=vmalloc
+$_PERF probe --cache -x $PERF -a 'my_event2=probe_cache__new $vars'
+$_PERF probe -d \*
+}
+
+: "Cache reuse by name" && {
+$_PERF probe -a %my_event
+$_PERF probe -a %my_event2
+! $_PERF probe -a %my_event3
+$_PERF probe -d \*
+}
+
+: "Cache reuse with wildcard" && {
+$_PERF probe -va %my_event*
+$_PERF probe --list | grep vmalloc
+$_PERF probe --list | grep probe_cache__new
+}
+
