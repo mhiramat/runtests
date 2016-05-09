@@ -107,6 +107,11 @@ parse_opts $*
 
 [ -z "$PERF" ] && PERF=$PERF_DIR/perf
 
+# make config-parameters absolute path
+PERF=`abspath $PERF`
+[ ! -x $PERF -o -d $PERF ] && usage 1 "Error: $PERF is not an executable"
+
+
 # Preparing logs
 LOG_FILE=$LOG_DIR/${SCRIPTNAME}.log
 mkdir -p $LOG_DIR || errexit "Failed to make a log directory: $LOG_DIR"
