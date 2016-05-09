@@ -1,0 +1,29 @@
+#!/bin/sh
+# description: Add buildid cache
+CACHEDIR=`abspath ./buildid-cache`
+
+: "Try to add valid and invalid files" && {
+$PERF --buildid-dir $CACHEDIR buildid-cache --add $PERF
+! $PERF --buildid-dir $CACHEDIR buildid-cache --add /nowhere/to/bin
+}
+
+: "check elf file is in the cache" && {
+find $CACHEDIR | grep elf\$
+}
+
+get_build_id() { # path
+LC_ALL=C readelf --note $PERF | grep "Build ID" | cut -f2 -d:
+}
+
+: "Get Build ID from file" && {
+BUILD_ID=`get_build_id $PERF`
+BUILD_ID_LEN=41 # or `echo $BUILD_ID | wc -c`
+BUILD_ID_TLEN=39 # or `expr $BUILD_ID_LEN - 2`
+BUILD_ID_TAIL=`echo $BUILD_ID | tail -c ${BUILD_ID_TLEN}`
+}
+
+: "Check whether Build ID cache has correct symlink" && {
+SYMLINK=`find $CACHEDIR -type l -name $BUILD_ID_TAIL`
+stat -L $SYMLINK &> /dev/null
+}
+

@@ -1,0 +1,25 @@
+#!/bin/sh
+# description: Check missing buildid cache
+CACHEDIR=`abspath ./buildid-cache`
+RECFILE=`abspath ./perf-record.data`
+BIDLIST=./buildid-list
+
+: "Record events" && {
+$PERF --buildid-dir $CACHEDIR record -a -N -o $RECFILE $PERF list
+}
+
+: "Check there are non-cached build-ids" && {
+$PERF --buildid-dir $CACHEDIR buildid-cache --missing $RECFILE | tee $BIDLIST
+test `cat $BIDLIST | wc -l` -ne 0
+}
+
+: "Record events with caching binaries" && {
+$PERF --buildid-dir $CACHEDIR record -a --buildid-all -o $RECFILE \
+	$PERF list &> /dev/null
+}
+
+: "Check there is all cached build-ids " && {
+$PERF --buildid-dir $CACHEDIR buildid-cache --missing $RECFILE | tee $BIDLIST
+test `cat $BIDLIST | wc -l` -eq 0
+}
+

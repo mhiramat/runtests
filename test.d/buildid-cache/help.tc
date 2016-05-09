@@ -1,0 +1,5 @@
+#!/bin/sh
+# description: Check help message
+! $PERF buildid-cache -h
+$PERF buildid-cache 2>&1 | grep Usage
+
