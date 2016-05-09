@@ -228,7 +228,7 @@ trap 'SIG_RESULT=$XFAIL' $SIG_XFAIL
 
 __run_test() { # testfile
   # setup PID and PPID, $$ is not updated.
-  (cd $TRACING_DIR; read PID _ < /proc/self/stat ; set -e; set -x; . $1)
+  (cd $WORKDIR; read PID _ < /proc/self/stat ; set -e; set -x; . $1)
   [ $? -ne 0 ] && kill -s $SIG_FAIL $SIG_PID
 }
 
@@ -236,6 +236,7 @@ __run_test() { # testfile
 run_test() { # testfile
   local testname=`basename $1`
   local testlog=`mktemp $LOG_DIR/${testname}-log.XXXXXX`
+  export WORKDIR=`mktemp -d runtest-${testname}.XXXXXX`
   testcase $1
   echo "execute: "$1 > $testlog
   SIG_RESULT=0
@@ -244,6 +245,8 @@ run_test() { # testfile
   else
     __run_test $1 >> $testlog 2>&1
   fi
+  # Remove workdir
+  rm -rf $WORKDIR
   eval_result $SIG_RESULT
   if [ $? -eq 0 ]; then
     # Remove test log if the test was done as it was expected.
