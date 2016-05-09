@@ -97,9 +97,15 @@ VERBOSE=0
 # Parse command-line options
 parse_opts $*
 
+[ $DEBUG -ne 0 ] && set -x
+
+# Config parameters
+# setup this here since PERF_DIR can be referred in config file
+[ -z "$PERF_DIR" ] && PERF_DIR=/usr/bin
+
 [ -f "$CONFIG" ] && . $CONFIG
 
-[ $DEBUG -ne 0 ] && set -x
+[ -z "$PERF" ] && PERF=$PERF_DIR/perf
 
 # Preparing logs
 LOG_FILE=$LOG_DIR/${SCRIPTNAME}.log
