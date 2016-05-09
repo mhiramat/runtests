@@ -245,8 +245,10 @@ run_test() { # testfile
   else
     __run_test $1 >> $testlog 2>&1
   fi
-  # Remove workdir
-  rm -rf $WORKDIR
+  if [ $DEBUG -eq 0 ]; then
+    # Remove workdir
+    rm -rf $WORKDIR
+  fi
   eval_result $SIG_RESULT
   if [ $? -eq 0 ]; then
     # Remove test log if the test was done as it was expected.
