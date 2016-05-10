@@ -3,6 +3,10 @@
 CACHEDIR=`abspath ./buildid-cache`
 _PERF="$PERF --buildid-dir $CACHEDIR"
 
+: "Check --cache availability" && {
+$_PERF probe 2>&1 | grep .*--cache || exit_unsupported
+}
+
 clear_all_probes
 
 sdt_check_scan() { # file
