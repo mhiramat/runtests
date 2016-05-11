@@ -37,6 +37,18 @@ done
 for ev in `sdt_from_elf $TARGET | sort | uniq`; do
   $_PERF probe --add %sdt_$ev
 done
+clear_all_probes
 }
 
+: "perf probe on SDT without % prefix" && {
+for ev in `sdt_from_elf $TARGET | sort | uniq`; do
+  $_PERF probe --add sdt_$ev
+done
 clear_all_probes
+}
+
+: "A bit nasty test" && {
+$_PERF probe --cache --add "sdt_probe=vmalloc"
+$_PERF probe -d sdt_probe
+! $_PERF probe --add "sdt_probe"
+}
