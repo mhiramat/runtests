@@ -1,0 +1,38 @@
+#!/bin/sh
+# description: Check list SDT events via perf-list
+CACHEDIR=`abspath ./buildid-cache`
+_PERF="$PERF --buildid-dir $CACHEDIR"
+
+: "Check --cache availability" && {
+$_PERF probe 2>&1 | grep .*--cache || exit_unsupported
+}
+: "Check sdt list availability" && {
+$_PERF list -h 2>&1 | grep sdt || exit_unsupported
+}
+
+clear_all_probes
+
+sdt_check_scan() { # file
+	test -f $1 || return 0
+	(readelf --notes $1 | grep stapsdt) &> /dev/null &&\
+		$_PERF buildid-cache --add $1
+}
+
+TARGET=`ls /usr/lib64/libc-*.so /usr/lib/libc-*.so | cut -f1 -d" "`
+
+: "Scan binaries which have SDT" && {
+sdt_check_scan $TARGET
+[ ! -d $CACHEDIR ] && exit_untested
+}
+
+sdt_from_elf() {
+	LC_ALL=C readelf -n $1 | awk '/Provider|Name/{print $2}' |\
+		xargs -n 2 printf "%s:%s\n"
+}
+
+: "Check scanned SDT is correct" && {
+for ev in `sdt_from_elf $TARGET`; do
+  $_PERF list sdt | grep $ev
+done
+}
+
